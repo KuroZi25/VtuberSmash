@@ -1,25 +1,65 @@
 <template>
-  <h1 class="text-center">SMASH or PASS</h1>
+  <div id="bg"></div>
+  <h1 class="titulo">SMASH or PASS</h1>
   <div id="conteinerUsers" v-if="this.listCandidatos.length > 0">
     <CardUser class="card" 
       :usuario="this.listCandidatos[0].usuario" 
       :orden="this.listCandidatos[0].letra" 
       :votantes="this.listCandidatos[0].votantes"
+      :porcentaje="this.getPorcentaje(0)"
     /> 
+    <span class="vs">VS</span>
     <CardUser class="card" 
       :usuario="this.listCandidatos[1].usuario" 
       :orden="this.listCandidatos[1].letra" 
       :votantes="this.listCandidatos[1].votantes"
+      :porcentaje="this.getPorcentaje(1)"
     /> 
   </div>
 </template>
 
 <style>
+  /* https://pictogrammers.com/library/mdi/ */
+
+  html, body
+  {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  html
+  {
+    background-color: black;
+  }
+
+  #bg
+  {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: url('./assets/fondo.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(3px);
+  }
+
   #app
   {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    color: white;
+  }
+
+  .titulo
+  {
+    font-size: 5em;
+    text-align: center;
+    font-family: 'Lemon', serif;
+    margin: 0.25em 0;
   }
 
   #conteinerUsers
@@ -31,16 +71,13 @@
     margin-top: 1em;
   }
 
-  #conteinerUsers .card
+  #conteinerUsers .vs
   {
-    margin: 0 2em;
-  }
-
-  .contador
-  {
-    font-size: 3em;
-    text-align: center;
-    width: 100%;
+    font-size: 5em;
+    font-family: 'Lemon', serif;
+    margin: 0 1em; 
+    display: flex;
+    align-items: center;
   }
 </style>
 
@@ -67,7 +104,8 @@
       [
         { letra: 'A', usuario: "", votantes: [] },
         { letra: 'B', usuario: "", votantes: [] },
-      ]
+      ],
+      usuariosVotados: []
     }),
     methods:
     {
@@ -92,33 +130,12 @@
         this.listCandidatos[0].usuario = this.listUsuarios[num1];
         this.listCandidatos[1].usuario = this.listUsuarios[num2];
       },
-      // seleccionarElementos() 
-      // {
-      //   var arr = this.listUsuarios;
-      
-      //   var numerosUsados = [];
-      //   var arrUsuarios = [];
-
-      //   while(arrUsuarios.length < 3)
-      //   {
-      //     var indice = Math.floor(Math.random() * arr.length);
-
-      //     if (!numerosUsados.includes(indice)) 
-      //     {
-      //       var data =
-      //       {
-      //         usuario: arr[indice],
-      //         casamiento: 0,
-      //         cita: 0,
-      //         fiesta: 0
-      //       }
-      //       arrUsuarios.push(data);
-      //       numerosUsados.push(indice);
-      //     }
-      //   }
-
-      //   return arrUsuarios;
-      // },
+      getPorcentaje(num)
+      {
+        var lista = this.listCandidatos[num];
+        var res = (lista.votantes.length * 100)/(this.listCandidatos[0].votantes.length + this.listCandidatos[1].votantes.length);
+        return parseFloat(res.toFixed(0));
+      },
       initTwitchChat() 
       {
         const client = new tmi.Client({ channels: ['akimorivt'] });
@@ -131,21 +148,17 @@
           
           message = message.toUpperCase();
 
-          if(this.votantes200.includes(tags['display-name'])) return;
+          if(this.usuariosVotados.includes(tags['display-name'])) return;
 
           if(message == 'A')
-          {            
-            
-            // this.porcentaje[0] = (this.cantidad[0] / (this.cantidad[0] + this.cantidad[1])) * 100;
-            // this.porcentaje[1] = (this.cantidad[1] / (this.cantidad[0] + this.cantidad[1])) * 100;
-                        
+          {                        
             this.listCandidatos[0].votantes.push(tags['display-name']);
-            this.votantes200.push(tags['display-name']);
+            this.usuariosVotados.push(tags['display-name']);
           }
           else if (message == 'B')
           {
             this.listCandidatos[1].votantes.push(tags['display-name']);
-            this.votantes200.push(tags['display-name']);
+            this.usuariosVotados.push(tags['display-name']);
           }
 
         });

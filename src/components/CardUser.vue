@@ -1,14 +1,14 @@
 <template>
-  <v-card class="cardUser" width="200" variant="text" :style="{opacity: this.opacity}">
+  <v-card class="cardUser" variant="text" :style="{opacity: this.opacity}">
     <h1 class="cardUser_orden text-center"> {{ this.orden }} </h1>
     
     <div class="contentImg">
-      <div v-if="this.porcentaje != null" class="contador">{{ this.porcentaje }}</div>
+      <div v-if="!isNaN(this.porcentaje)" class="contador">{{ this.porcentaje }}</div>
       <v-img class="cardUser_img" :src='datos.profile_image_url'/>
     </div>
 
     <h2 class="cardUser_name"> {{ datos.display_name }} </h2>
-    <h3 class="cardUser_cantidad text-center">{{ this.votantes.length }}</h3>
+    
     <div class="cardUser_votantes antidad text-center">
       <span v-for="votante in votantes" :key="votante">{{ votante }}</span>
     </div>
@@ -67,35 +67,67 @@ export default
 <style>
   .cardUser
   {
-    width: 200px;
+    width: 20em;
     transition: opacity 0.5s ease-in-out;
   }
 
-  .cardUser .cardUser_img
+  .cardUser .cardUser_orden
   {
+    font-size: 5em;
+    font-family: 'Archivo Black', sans-serif;
+  }
+
+  .cardUser .contentImg
+  {
+    position: relative;
+    width: 100%;
+    height: 20em;
     border: 4px solid black; 
     border-radius: 8px; 
-    padding: 10px; 
     box-shadow: 0 0 50px #00000062;
-    min-width: 200px;
-    min-height: 200px;
     background-color: white;
   }
 
-  .cardUser .cardUser_name
+  .cardUser .contentImg .contador
   {
-    text-align: center;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 5em;
+    font-family: 'Archivo Black', sans-serif;
+  }
+
+  .cardUser .cardUser_name
+  { 
+    display: flex;   
+    align-items: center;
+    justify-content: center;
+    height: 2em;
     border: 3px solid black;
     border-radius: 8px;
-    margin:0.15em 0;
+    margin: 0.15em 0;
+    font-size: 2em;
+    color: black;
     background-color: white;
     text-transform: capitalize;
-    min-height: 42px;
+    font-family: 'Archivo Black', sans-serif;
   }
 
   .cardUser .cardUser_votantes
   {
     display: flex;
     flex-direction: column;
+  }
+
+  .cardUser .cardUser_votantes span
+  {
+    font-size: 1.2em;
+    font-family: 'Archivo Black', sans-serif;
   }
 </style>
